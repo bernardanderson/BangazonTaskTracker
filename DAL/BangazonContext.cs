@@ -9,6 +9,10 @@ namespace BangazonTaskTracker.DAL
 {
     public class BangazonContext : DbContext
     {
-        public DbSet<UserTask> Users { get; set; }
+        public BangazonContext(DbContextOptions<BangazonContext> options) : base(options)
+        {
+        }
+
+        public DbSet<UserTask> UserTasks { get; set; }
     }
 }

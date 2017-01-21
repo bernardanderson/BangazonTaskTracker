@@ -16,13 +16,13 @@ namespace BangazonTaskTracker.Models
     public class UserTask
     {
         [Key]
-        public int Id;
+        public int Id { get; set; }
         [Required]
-        public string Name;
+        public string Name { get; set; }
         [Required]
-        public string Description;
+        public string Description { get; set; }
         [Required]
-        public TaskStatus Status;
-        public DateTime CompletedOn;
+        public TaskStatus Status { get; set; }
+        public DateTime CompletedOn { get; set; }
     }
 }
