@@ -69,18 +69,29 @@ namespace BangazonTaskTracker.Controllers
             UserTask returnedDbTask = newRepo.AddTask(sentTask);
             if (returnedDbTask == null)
             {
-                return StatusCode(415, "User Task Not Added to Db");
+                return StatusCode(415, "User Task Not Added to Db. Are you trying to update instead of add?");
             }
             return Ok(returnedDbTask);
         }
-        /*
-        // PUT api/values/5
-        [HttpPut("api/[controller]/{id}")]
-        public IActionResult Put(int id, [FromBody]string value)
+        
+        // Checks to see the submitted user task is valid and if so, updates the Task.
+        [HttpPut("api/[controller]")]
+        public IActionResult UpdateTaskToDb([FromBody]UserTask sentTask)
         {
-            return Ok();
+            if (InvalidUserTask(sentTask))
+            {
+                return StatusCode(415, "Malformed User Task Received");
+            }
+            UserTask returnedDbUserTask = newRepo.UpdateTask(sentTask);
+
+            if (returnedDbUserTask == null)
+            {
+                return StatusCode(415, "User Task not Found in Db. Are you trying to add instead of update?");
+            }
+            return Ok(returnedDbUserTask);
         }
 
+        /*
         // DELETE api/values/5
         [HttpDelete("api/[controller]/{id}")]
         public IActionResult Delete(int id)
