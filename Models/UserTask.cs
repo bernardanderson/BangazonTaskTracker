@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BangazonTaskTracker.Models
 {
-    public enum TaskStatus
+    public enum UserTaskStatus
     {
         ToDo,
         InProgress,
@@ -22,7 +22,7 @@ namespace BangazonTaskTracker.Models
         [Required]
         public string Description { get; set; }
         [Required]
-        public TaskStatus Status { get; set; }
-        public DateTime CompletedOn { get; set; }
+        public UserTaskStatus Status { get; set; }
+        public DateTime? CompletedOn { get; set; }
     }
 }

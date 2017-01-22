@@ -18,13 +18,27 @@ namespace BangazonTaskTracker.Controllers
         }
 
         // Just so I don't have to repeat checks for Nulls in every return operation
-        private IActionResult CheckNullReturnStatus(dynamic sentDbResult, int returnStatusCode, string returnStatusErrMsg)
+        private IActionResult CheckNullReturnStatus(dynamic sentDbResult, int returnStatusGoodCode, int returnStatusErrCode, string returnStatusErrMsg)
         {
             if (sentDbResult != null)
             {
-                return Ok(sentDbResult);
+                return StatusCode(returnStatusGoodCode, sentDbResult);
             }
-            return StatusCode(returnStatusCode, returnStatusErrMsg);
+            return StatusCode(returnStatusErrCode, returnStatusErrMsg);
+        }
+
+        // Checks to see if a UserTask is malformed or null
+        private bool InvalidUserTask (dynamic sentTask)
+        {
+            if (sentTask == null ||
+                sentTask.Name == "" ||
+               (sentTask.Status < UserTaskStatus.ToDo || sentTask.Status > UserTaskStatus.Complete) ||
+               sentTask.Description == "" ||
+               sentTask.Id < 0 )
+            {
+                return true;
+            }
+            return false;
         }
 
         // Gets complete list of UserTasks
@@ -32,34 +46,34 @@ namespace BangazonTaskTracker.Controllers
         public IActionResult GetFullList()
         {
             List<UserTask> userTaskList = newRepo.ReturnTaskList();
-
-            return CheckNullReturnStatus(userTaskList, 415, "No Data to Return");
+            return CheckNullReturnStatus(userTaskList, 200, 204, "No Tasks Found if Database");
         }
 
-        /*
         // Gets a single task based on it's ID
         [HttpGet("api/[controller]/{id}")]
         public IActionResult GetSingleTask(int id)
         {
-            UserTask newUserTask = newRepo.ReturnTaskList();
-
-
-
-            return Ok();
+            UserTask returnedUserTask = newRepo.ReturnSingleUserTaskList(id);
+            return CheckNullReturnStatus(returnedUserTask, 200, 204, "Invalid Id, No Task to Return");
         }
 
-        // POST api/values
+        // Checks to see if the submitted user task is valid and if so, adds the new Task to the Database and returns the new task to the client
         [HttpPost("api/[controller]")]
-        public IActionResult Post(UserTask sentTask)
+        public IActionResult PostTaskToDb([FromBody]UserTask sentTask)
         {
-            if (sentTask != null && sentTask.Name == "")
+            if (InvalidUserTask(sentTask))
             {
-                webAPIRepo.AddNewTask(sentTask);
-                return StatusCode(201, "New Task Added");
+                return StatusCode(415, "Malformed User Task Received");
             }
-            return StatusCode(415, "Malformed Task");
-        }
 
+            UserTask returnedDbTask = newRepo.AddTask(sentTask);
+            if (returnedDbTask == null)
+            {
+                return StatusCode(415, "User Task Not Added to Db");
+            }
+            return Ok(returnedDbTask);
+        }
+        /*
         // PUT api/values/5
         [HttpPut("api/[controller]/{id}")]
         public IActionResult Put(int id, [FromBody]string value)
