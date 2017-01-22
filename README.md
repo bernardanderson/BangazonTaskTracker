@@ -1,39 +1,76 @@
-# Welcome to ASP.NET Core
+# Bangazon TaskTracker (Backend)
 
-We've made some big updates in this release, so it’s **important** that you spend a few minutes to learn what’s new.
+### Specs:
+> Create a backend WebAPI2 Interface for creating, modifying, updating and deleting a simple ToDo task list.
 
-You've created a new ASP.NET Core project. [Learn what's new](https://go.microsoft.com/fwlink/?LinkId=518016)
+### Technologies Used:
+1. [MS .NET Core 1.1] (https://www.microsoft.com/net/download/core#/current) 
+2. Entity Framework with Db Migrations
+3. SQL Server Express
 
-## This application consists of:
+### How to run:
+#### Initial Setup
+1. Clone or download this repo
+2. In the repo dir, at the Package Manager Command Prompt type `dotnet restore`
+3. Once the packages are installed, in the package manager:
+    * Enable the initial migration of the Db:  
+   `dotnet ef migrations add InitialCreate -c BangazonContext`  
+    * Apply the migration to the Db:  
+   `dotnet ef database update -c BangazonContext`  
+4. On first run the Database will be seeded with a single user task
 
-*   Sample pages using ASP.NET Core MVC
-*   [Bower](https://go.microsoft.com/fwlink/?LinkId=518004) for managing client-side libraries
-*   Theming using [Bootstrap](https://go.microsoft.com/fwlink/?LinkID=398939)
+#### API Access
+The default domain/port of the package is - localhost:1479  
 
-## How to
+##### The "UserTask" format
+When sending/receiving data from the API, it will be in the "UserTask" format:
+```
+{
+	"id": 4,
+	"name": "Go Shopping at JcPenny",
+	"description": "Shop for a new pair of shoes",
+	"status": 0,
+	"completedOn": "2017-01-21T23:40:15.8460917"
+}
+``` 
+1. Any task is required to have a name, description and status (see below for status options). The lack of any of these three fields will yield an error.
+    * The 'status' is an int value of 0, 1 or 2: 0="ToDo", 1="InProgress", 2="Complete"
 
-*   [Add a Controller and View](https://go.microsoft.com/fwlink/?LinkID=398600)
-*   [Add an appsetting in config and access it in app.](https://go.microsoft.com/fwlink/?LinkID=699562)
-*   [Manage User Secrets using Secret Manager.](https://go.microsoft.com/fwlink/?LinkId=699315)
-*   [Use logging to log a message.](https://go.microsoft.com/fwlink/?LinkId=699316)
-*   [Add packages using NuGet.](https://go.microsoft.com/fwlink/?LinkId=699317)
-*   [Add client packages using Bower.](https://go.microsoft.com/fwlink/?LinkId=699318)
-*   [Target development, staging or production environment.](https://go.microsoft.com/fwlink/?LinkId=699319)
+##### The API:
+The API has six actions that all return info in Json "UserTask" format:
+1. Return a full list of user tasks
+GET: `/api/bangazon`
 
-## Overview
+1. Return a list of a tasks of that status level (0="ToDo", 1="InProgress", 2="Complete")  
+GET: `/api/bangazon/stat/{StatId}`  
+[where {StatId} is an integer Id corresponding to one of the three "status"]  
 
-*   [Conceptual overview of what is ASP.NET Core](https://go.microsoft.com/fwlink/?LinkId=518008)
-*   [Fundamentals of ASP.NET Core such as Startup and middleware.](https://go.microsoft.com/fwlink/?LinkId=699320)
-*   [Working with Data](https://go.microsoft.com/fwlink/?LinkId=398602)
-*   [Security](https://go.microsoft.com/fwlink/?LinkId=398603)
-*   [Client side development](https://go.microsoft.com/fwlink/?LinkID=699321)
-*   [Develop on different platforms](https://go.microsoft.com/fwlink/?LinkID=699322)
-*   [Read more on the documentation site](https://go.microsoft.com/fwlink/?LinkID=699323)
+1. Return a single user task based on it's Id  
+GET: `/api/bangazon/{TaskId}`  
+[where {TaskId} is an integer Id for a task]  
 
-## Run & Deploy
+1. Sending a new UserTask (via the request Body) in "UserTask" format will add a new task to the list  
+POST: `/api/bangazon`  
 
-*   [Run your app](https://go.microsoft.com/fwlink/?LinkID=517851)
-*   [Run tools such as EF migrations and more](https://go.microsoft.com/fwlink/?LinkID=517853)
-*   [Publish to Microsoft Azure Web Apps](https://go.microsoft.com/fwlink/?LinkID=398609)
+    * When adding a new task, the API will look for a UserTask with no Id or an Id value of 0.
+    * Adding a task, if successful, will return that full, new task. 
 
-We would love to hear your [feedback](https://go.microsoft.com/fwlink/?LinkId=518015)
+1. Sending a prior "UserTask" (via the request Body) in "UserTask" format will update that task  
+PUT: `/api/bangazon`  
+
+    * When updating a task the Id of the updated task needs to be present
+    * Updating a task, if successful, will return the updated, full task.
+
+1. Deletes a single user task based on it's Id  
+DELETE: `/api/bangazon/{TaskId}`  
+(where {TaskId} is an integer Id for a task)  
+
+### Specs By:
+[Nashville Software School](https://github.com/nashville-software-school)  
+[Steve Brownlee](https://github.com/chortlehoort)  
+[Nathan Gonzalez](https://github.com/ncgonz)  
+
+### Contributors:
+[Bernie Anderson](https://github.com/bernardanderson)  
+
+
