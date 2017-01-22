@@ -15,9 +15,9 @@ namespace BangazonTaskTracker.DAL
             Context = _context;
         }
 
-        public UserTask ReturnTaskList()
+        public List<UserTask> ReturnTaskList()
         {
-            return Context.UserTasks.FirstOrDefault(u => u.Id == 1);
+            return Context.UserTasks.ToList();
         }
 
         /*

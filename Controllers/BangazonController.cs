@@ -22,7 +22,7 @@ namespace BangazonTaskTracker.Controllers
         [HttpGet("api/[controller]")]
         public IActionResult Get()
         {
-            UserTask newUserTask = newRepo.ReturnTaskList();
+            List<UserTask> newUserTask = newRepo.ReturnTaskList();
 
             if (newUserTask != null)
             {
