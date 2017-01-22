@@ -17,7 +17,7 @@
    `dotnet ef migrations add InitialCreate -c BangazonContext`  
     * Apply the migration to the Db:  
    `dotnet ef database update -c BangazonContext`  
-4. On first run the Database will be seeded with a single user task
+4. On first run the Database will be seeded with two user tasks
 
 #### API Access
 The default domain/port of the package is - localhost:1479  
