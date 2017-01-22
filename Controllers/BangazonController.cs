@@ -10,34 +10,41 @@ namespace BangazonTaskTracker.Controllers
 {
     public class BangazonController : Controller
     {
-        // The Repo isn't created using a "new" as the repo Class has been scoped to allow the Repo access to
-        //  DI'd context
+        // The Repo isn't created using a "new" as the repo Class has been scoped to allow the Repo access to DI'd context
         private BangazonRespository newRepo;
         public BangazonController(BangazonRespository repo)
         {
             newRepo = repo;
         }
 
-        // GET api/values
-        [HttpGet("api/[controller]")]
-        public IActionResult Get()
+        // Just so I don't have to repeat checks for Nulls in every return operation
+        private IActionResult CheckNullReturnStatus(dynamic sentDbResult, int returnStatusCode, string returnStatusErrMsg)
         {
-            List<UserTask> newUserTask = newRepo.ReturnTaskList();
-
-            if (newUserTask != null)
+            if (sentDbResult != null)
             {
-                return Ok( newRepo.ReturnTaskList() );
-            } else
-            {
-                return StatusCode(415, "No Data to Return");
+                return Ok(sentDbResult);
             }
+            return StatusCode(returnStatusCode, returnStatusErrMsg);
+        }
+
+        // Gets complete list of UserTasks
+        [HttpGet("api/[controller]")]
+        public IActionResult GetFullList()
+        {
+            List<UserTask> userTaskList = newRepo.ReturnTaskList();
+
+            return CheckNullReturnStatus(userTaskList, 415, "No Data to Return");
         }
 
         /*
-        // GET api/values/5
+        // Gets a single task based on it's ID
         [HttpGet("api/[controller]/{id}")]
-        public IActionResult Get(int id)
+        public IActionResult GetSingleTask(int id)
         {
+            UserTask newUserTask = newRepo.ReturnTaskList();
+
+
+
             return Ok();
         }
 
