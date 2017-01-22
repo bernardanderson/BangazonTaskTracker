@@ -11,8 +11,8 @@ namespace BangazonTaskTracker.Controllers
     public class BangazonController : Controller
     {
         // The Repo isn't created using a "new" as the repo Class has been scoped to allow the Repo access to DI'd context
-        private BangazonRespository newRepo;
-        public BangazonController(BangazonRespository repo)
+        private BangazonRepository newRepo;
+        public BangazonController(BangazonRepository repo)
         {
             newRepo = repo;
         }
@@ -46,17 +46,23 @@ namespace BangazonTaskTracker.Controllers
         public IActionResult GetFullList()
         {
             List<UserTask> userTaskList = newRepo.ReturnTaskList();
-            return CheckNullReturnStatus(userTaskList, 200, 204, "No Tasks Found if Database");
+            return CheckNullReturnStatus(userTaskList, 200, 204, "");
         }
 
         // Gets a single task based on it's ID
-        [HttpGet("api/[controller]/{id}")]
-        public IActionResult GetSingleTask(int id)
+        [HttpGet("api/[controller]/{taskId:int}")]
+        public IActionResult GetSingleTask(int taskId)
         {
-            UserTask returnedUserTask = newRepo.ReturnSingleUserTaskList(id);
-            return CheckNullReturnStatus(returnedUserTask, 200, 204, "Invalid Id, No Task to Return");
+            UserTask returnedUserTask = newRepo.ReturnSingleUserTaskList(taskId);
+            return CheckNullReturnStatus(returnedUserTask, 200, 204, "");
         }
-
+        // Gets a single task based on it's ID
+        [HttpGet("api/[controller]/stat/{statusId:int}")]
+        public IActionResult GetStatusTaskList(int statusId)
+        {
+            List<UserTask> returnedStatusUserTasks = newRepo.ReturnStatusUserTaskList(statusId);
+            return CheckNullReturnStatus(returnedStatusUserTasks, 200, 204, "");
+        }
         // Checks to see if the submitted user task is valid and if so, adds the new Task to the Database and returns the new task to the client
         [HttpPost("api/[controller]")]
         public IActionResult PostTaskToDb([FromBody]UserTask sentTask)
@@ -71,7 +77,7 @@ namespace BangazonTaskTracker.Controllers
             {
                 return StatusCode(415, "User Task Not Added to Db. Should you update (PUT) instead of add (POST)?");
             }
-            return Ok(returnedDbTask);
+            return StatusCode(201, returnedDbTask);
         }
         
         // Checks to see the submitted user task is valid and if so, updates the Task.
@@ -88,7 +94,7 @@ namespace BangazonTaskTracker.Controllers
             {
                 return StatusCode(415, "User Task not Found in Db. Should you add (POST) instead of update (PUT)?");
             }
-            return Ok(returnedDbUserTask);
+            return StatusCode(201, returnedDbUserTask);
         }
 
         // Deletes the userTask based on it's Id

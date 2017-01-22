@@ -37,7 +37,7 @@ namespace BangazonTaskTracker
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // Needed to allow the Respository access the DI'd DbContext
-            services.AddScoped<BangazonRespository>();
+            services.AddScoped<BangazonRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BangazonTaskTracker.DAL
 {
-    public class BangazonRespository
+    public class BangazonRepository
     {
         private readonly BangazonContext Context;
-        public BangazonRespository(BangazonContext _context)
+        public BangazonRepository(BangazonContext _context)
         {
             Context = _context;
         }
@@ -31,11 +31,25 @@ namespace BangazonTaskTracker.DAL
             // Quick check to make sure the thing being added doesn't already exist (by Id)
             if (Context.UserTasks.FirstOrDefault(ut => ut.Id == sentUserTask.Id) == null)
             {
+                if (sentUserTask.Status == UserTaskStatus.Complete)
+                {
+                    sentUserTask.CompletedOn = DateTime.Now;
+                }
+                else
+                {
+                    sentUserTask.CompletedOn = null;
+                }
+
                 Context.UserTasks.Add(sentUserTask);
                 Context.SaveChanges();
                 return Context.UserTasks.LastOrDefault(ut => ut.Name == sentUserTask.Name);
             }
             return (sentUserTask = null);
+        }
+        // Returns a list of UserTasks based on their status code (0, 1 or 2)
+        public List<UserTask> ReturnStatusUserTaskList(int sentStatusId)
+        {
+            return Context.UserTasks.Where(ut => ut.Status == (UserTaskStatus)sentStatusId).ToList();
         }
 
         // Takes a sentUserTask and finds it in the Db. If not present, then it returns null.
