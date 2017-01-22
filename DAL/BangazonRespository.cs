@@ -29,7 +29,7 @@ namespace BangazonTaskTracker.DAL
         public UserTask AddTask(UserTask sentUserTask)
         {
             // Quick check to make sure the thing being added doesn't already exist (by Id)
-            if (Context.UserTasks.FirstOrDefault(ut => ut.Id == sentUserTask.Id) != null)
+            if (Context.UserTasks.FirstOrDefault(ut => ut.Id == sentUserTask.Id) == null)
             {
                 Context.UserTasks.Add(sentUserTask);
                 Context.SaveChanges();
@@ -66,7 +66,16 @@ namespace BangazonTaskTracker.DAL
             Context.SaveChanges();
             return updatingUserTask;
         }
+        public UserTask DeleteTask(int sentId)
+        {
+            UserTask foundTask = Context.UserTasks.FirstOrDefault(ut => ut.Id == sentId);
 
-
+            if (foundTask != null)
+            {
+                Context.UserTasks.Remove(foundTask);
+                Context.SaveChanges();
+            }
+            return foundTask;
+        }
     }
 }

@@ -69,7 +69,7 @@ namespace BangazonTaskTracker.Controllers
             UserTask returnedDbTask = newRepo.AddTask(sentTask);
             if (returnedDbTask == null)
             {
-                return StatusCode(415, "User Task Not Added to Db. Are you trying to update instead of add?");
+                return StatusCode(415, "User Task Not Added to Db. Should you update (PUT) instead of add (POST)?");
             }
             return Ok(returnedDbTask);
         }
@@ -86,18 +86,21 @@ namespace BangazonTaskTracker.Controllers
 
             if (returnedDbUserTask == null)
             {
-                return StatusCode(415, "User Task not Found in Db. Are you trying to add instead of update?");
+                return StatusCode(415, "User Task not Found in Db. Should you add (POST) instead of update (PUT)?");
             }
             return Ok(returnedDbUserTask);
         }
 
-        /*
-        // DELETE api/values/5
+        // Deletes the userTask based on it's Id
         [HttpDelete("api/[controller]/{id}")]
         public IActionResult Delete(int id)
         {
-            return Ok();
+            UserTask deletedTask = newRepo.DeleteTask(id);
+            if (deletedTask == null)
+            {
+                return StatusCode(415, "Task Not Deleted. Is it in the database?");
+            }
+            return Ok(deletedTask);
         }
-        */
     }
 }
