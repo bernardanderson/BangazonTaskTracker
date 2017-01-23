@@ -39,7 +39,7 @@ When sending/receiving data from the API, it will be in the "UserTask" format:
 ##### The API:
 The API has six actions that all return info in Json "UserTask" format:  
 1. Return a full list of user tasks  
-GET: `/api/bangazon`
+GET: `/api/bangazon`  
 
 1. Return a list of a tasks of that status level (0="ToDo", 1="InProgress", 2="Complete")  
 GET: `/api/bangazon/stat/{StatId}`  
